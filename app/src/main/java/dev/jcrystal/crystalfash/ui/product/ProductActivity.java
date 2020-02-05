@@ -20,8 +20,12 @@ import java.text.NumberFormat;
 
 import dev.jcrystal.crystalfash.R;
 import dev.jcrystal.crystalfash.models.Product;
+import jcrystal.mobile.net.controllers.ManagerProduct;
+import jcrystal.mobile.net.utils.On1SuccessListener;
+import jcrystal.mobile.net.utils.OnErrorListener;
+import jcrystal.mobile.net.utils.RequestError;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends AppCompatActivity implements On1SuccessListener, OnErrorListener {
     private TextView txtName,txtDescription,txtCategory, txtPrice, txtOldPrice;
     private ImageView img;
     Button btnAdd2Cart;
@@ -44,8 +48,7 @@ public class ProductActivity extends AppCompatActivity {
         Intent intent = getIntent();
         long idProduct = intent.getExtras().getLong("idProduct");
 
-        //TODO get product details from id
-        product = new Product("Sweater 1", "MEN", "soft sweater", "https://imgur.com/OqgIsqf.jpg", 13, 28);
+        ManagerProduct.getProductById(this, idProduct, this, this);
 
         // Setting values
 
@@ -60,12 +63,23 @@ public class ProductActivity extends AppCompatActivity {
         btnAdd2Cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO
                 Toast.makeText(getApplicationContext(), "Item has been added to your cart", Toast.LENGTH_LONG).show();
                 finish();
             }
         });
 
+    }
+
+    @Override
+    public void onSuccess(Object o) {
+        Toast.makeText(this, "Carrito creado", Toast.LENGTH_SHORT).show();
+        product = (Product) o;
+        //Listo para usar el producto
+    }
+
+    @Override
+    public void onError(RequestError error) {
+        Toast.makeText(this, error.mensaje, Toast.LENGTH_SHORT).show();
     }
 
 }
